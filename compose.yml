@@ -1,0 +1,31 @@
+services:
+
+  db:
+    container_name: mssql2019
+    hostname: mssql2019
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_PASSWORD}
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+
+  api:
+    build:
+      dockerfile: src/API/Dockerfile
+    container_name: country-holiday-checker
+    hostname: countryholidaychecker
+    ports:
+      - "8080:${ASPNETCORE_HTTP_URL}"
+      - "8081:${ASPNETCORE_HTTPS_URL}"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=${ASPNETCORE_URLS}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${ASPNETCORE_Kestrel__Certificates__Default__Password}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${ASPNETCORE_Kestrel__Certificates__Default__Path}
+    volumes:
+      - .\certificates\https:/https:ro
+    depends_on:
+      db:
+        condition: service_started
