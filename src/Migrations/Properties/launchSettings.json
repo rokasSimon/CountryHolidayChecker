@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Migrations": {
+      "commandName": "Project",
+      "commandLineArgs": "--ConnectionStrings:CountryHolidayDB=\"Server=mssql2019;Database=CountryHoliday;User Id=sa;Password=CountryHolidayChecker_Password;Encrypt=False;TrustServerCertificate=True;\""
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ﻿using API.Infrastructure;
-using Application.CountryHolidays.MaximumFreeDays;
+using Application.CountryHolidays.MaximumFreeDays.DTO;
 using MediatR;
 
 namespace API.Endpoints;

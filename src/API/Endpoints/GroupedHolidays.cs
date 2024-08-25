@@ -1,5 +1,5 @@
 ﻿using API.Infrastructure;
-using Application.CountryHolidays.GroupedHolidays;
+using Application.CountryHolidays.GroupedHolidays.DTO;
 using MediatR;
 
 namespace API.Endpoints;

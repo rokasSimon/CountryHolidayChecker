@@ -8,15 +8,34 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=${MSSQL_PASSWORD}
       - MSSQL_PID=Express
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${MSSQL_PASSWORD}" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
     ports:
       - "1433:1433"
     volumes:
       - ./.containers/db/data:/var/opt/mssql/data
       - ./.containers/db/log:/var/opt/mssql/log
 
+  db-migrations:
+    container_name: db-migrations
+    hostname: db-migrations
+    build:
+      context: src/Migrations
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+
   api:
     build:
-      dockerfile: src/API/Dockerfile
+      context: src/API
+      dockerfile: Dockerfile
     container_name: country-holiday-checker
     hostname: countryholidaychecker
     ports:
@@ -30,5 +49,5 @@ services:
     volumes:
       - .\certificates\https:/https:ro
     depends_on:
-      db:
-        condition: service_started
+      db-migrations:
+        condition: service_completed_successfully
