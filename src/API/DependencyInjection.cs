@@ -35,4 +35,12 @@ public static class DependencyInjection
 
         return app;
     }
+
+    public static IServiceCollection AddAPIServices(this IServiceCollection services)
+    {
+        services.AddExceptionHandler<CustomExceptionHandler>();
+        services.AddProblemDetails();
+
+        return services;
+    }
 }
