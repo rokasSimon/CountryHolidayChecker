@@ -17,12 +17,13 @@ try
 {
     var builder = Host.CreateDefaultBuilder(args);
     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
+    var connectionString = Environment.GetEnvironmentVariable("MSSQL_CONNECTION_STRING")
+        ?? throw new ArgumentException("Database connection string not specified in environment variables");
 
     builder.UseEnvironment(environment);
     builder.ConfigureAppConfiguration((context, builder) =>
     {
-        builder.AddEnvironmentVariables();
-        builder.AddCommandLine(args);
+        context.Configuration["ConnectionStrings:CountryHolidayDB"] = connectionString;
     });
 
     builder.ConfigureServices((context, services) =>
@@ -45,8 +46,4 @@ catch (Exception e)
     Log.Fatal(e, "Could not complete migration because of exception:");
 
     return 1;
-}
-finally
-{
-    await Log.CloseAndFlushAsync();
 }

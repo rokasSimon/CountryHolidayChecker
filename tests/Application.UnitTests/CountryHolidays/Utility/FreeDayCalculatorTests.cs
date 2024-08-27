@@ -3,7 +3,7 @@ using Application.Interfaces.Services.Utility;
 
 using FluentAssertions;
 
-namespace Application.UnitTests;
+namespace Application.UnitTests.CountryHolidays.Utility;
 
 [TestFixture]
 public class FreeDayCalculatorTests

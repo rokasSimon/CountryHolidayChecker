@@ -5,15 +5,23 @@ FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 USER app
 WORKDIR /app
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Migrations/Migrations.csproj", "src/Migrations/"]
-RUN dotnet restore "./src/Migrations/Migrations.csproj"
-COPY . .
-WORKDIR "/src/src/Migrations"
+
+COPY ["src/Migrations/Migrations.csproj", "./Migrations/"]
+COPY ["src/Infrastructure/Infrastructure.csproj", "./Infrastructure/"]
+COPY ["src/Application/Application.csproj", "./Application/"]
+COPY ["src/Domain/Domain.csproj", "./Domain/"]
+RUN dotnet restore "./Migrations/Migrations.csproj"
+
+COPY ["src/Migrations/", "./Migrations/"]
+COPY ["src/Infrastructure/", "./Infrastructure/"]
+COPY ["src/Application/", "./Application/"]
+COPY ["src/Domain/", "./Domain/"]
+
+WORKDIR /src/Migrations
 RUN dotnet build "./Migrations.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

@@ -1,3 +1,3 @@
 ﻿namespace Application.CountryHolidays.MaximumFreeDays.DTO;
 
-public record GetMaximumFreeDaysResult(int days, DateOnly start, DateOnly end);
+public record GetMaximumFreeDaysResult(int Days, string StartDate, string EndDate);

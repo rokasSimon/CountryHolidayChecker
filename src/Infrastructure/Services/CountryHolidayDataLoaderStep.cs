@@ -1,8 +1,9 @@
 ﻿using Application.CountryHolidays.Common.DTO;
-using Application.CountryHolidays.Common.Exceptions;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services.External;
 using Domain.Entities;
+
+using Infrastructure.Common.Exceptions;
 
 namespace Infrastructure.Services;
 
@@ -21,7 +22,7 @@ public class CountryHolidayDataLoaderStep(
         }
 
         var country = await _countryRepository.GetCountryByCodeAsync(request.CountryCode)
-            ?? throw new MissingResourceException($"Country:{request.CountryCode}");
+            ?? throw new MissingResourceException($"Country code: {request.CountryCode}");
 
         var fetchedHolidays = await _holidayFetcher.FetchHolidaysAsync(request.CountryCode, request.Year);
         var holidays = fetchedHolidays.Select(h =>

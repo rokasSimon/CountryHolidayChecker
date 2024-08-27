@@ -11,6 +11,6 @@ public class GetGroupedHolidaysRequestValidator : AbstractValidator<GetGroupedHo
         RuleFor(p => p.CountryCode)
             .Length(3);
         RuleFor(p => p.Year)
-            .InclusiveBetween(2011, 30000);
+            .InclusiveBetween(2011, 9999);
     }
 }

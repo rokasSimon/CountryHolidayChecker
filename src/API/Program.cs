@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEndpoints();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddAPIServices();
 
 var app = builder.Build();
 
@@ -27,6 +28,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler();
 
 var routeGroup = app.MapGroup("api/");
 app.MapEndpoints(routeGroup);

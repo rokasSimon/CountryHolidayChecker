@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Json;
 using Application.CountryHolidays.Common.DTO;
 using Application.Interfaces.Services.External;
+
+using Infrastructure.Common.Exceptions;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 
@@ -13,10 +15,19 @@ public class CountryHolidayDataFetcher(
 {
     public async Task<IEnumerable<FetchedCountryHoliday>> FetchHolidaysAsync(string countryCode, int year)
     {
-        var client = _httpClientFactory.CreateClient(nameof(CountryHolidayFetcherOptions));
+        var queryUrl = $"{_options.Value.CountryHolidayUrl}?year={year}&country={countryCode}";
 
-        var response = await client.GetFromJsonAsync<IEnumerable<FetchedCountryHoliday>>(_options.Value.CountryHolidayUrl);
+        try
+        {
+            var client = _httpClientFactory.CreateClient(nameof(CountryHolidayFetcherOptions));
 
-        return response ?? [];
+            var response = await client.GetFromJsonAsync<IEnumerable<FetchedCountryHoliday>>(queryUrl);
+
+            return response ?? [];
+        }
+        catch (Exception)
+        {
+            throw new FailedFetchException(queryUrl);
+        }
     }
 }

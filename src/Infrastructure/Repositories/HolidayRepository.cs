@@ -30,7 +30,9 @@ public class HolidayRepository(CountryHolidayContext _context)
 
         if (country != null)
         {
-            holidayDates = country.Holidays.SelectMany(h => h.Dates);
+            holidayDates = country.Holidays
+                .SelectMany(h => h.Dates)
+                .Where(d => d.Date.Year == year);
         }
 
         return holidayDates;

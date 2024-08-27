@@ -19,7 +19,7 @@ public class LocalizedNameConfiguration : IEntityTypeConfiguration<LocalizedName
 
         builder
             .Property(n => n.Text)
-            .HasMaxLength(60)
+            .HasMaxLength(120)
             .IsRequired();
     }
 }

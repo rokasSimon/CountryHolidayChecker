@@ -1,7 +1,8 @@
-﻿using Application.CountryHolidays.MaximumFreeDays.DTO;
+﻿using System.Globalization;
+
+using Application.CountryHolidays.MaximumFreeDays.DTO;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services.Utility;
-
 using MediatR;
 
 namespace Application.CountryHolidays.MaximumFreeDays.Handlers;
@@ -17,6 +18,9 @@ public class GetMaximumFreeDaysHandler(
 
         var (days, startDate, endDate) = _freeDayCalculator.FindMaximumRowOfFreeDays(request.Year, holidays.Select(x => x.Date).ToHashSet());
 
-        return new GetMaximumFreeDaysResult(days, startDate, endDate);
+        return new GetMaximumFreeDaysResult(
+            days,
+            startDate.ToString("yyyy-MM-dd"),
+            endDate.ToString("yyyy-MM-dd"));
     }
 }

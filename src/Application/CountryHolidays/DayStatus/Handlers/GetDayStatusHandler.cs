@@ -1,30 +1,20 @@
-﻿using Application.CountryHolidays.CountryList.DTO;
-using Application.CountryHolidays.DayStatus.DTO;
-using Application.Interfaces.Repositories;
+﻿using System.Globalization;
 
+using Application.CountryHolidays.DayStatus.DTO;
+using Application.Interfaces.Services.Utility;
 using MediatR;
 
 namespace Application.CountryHolidays.DayStatus.Handlers;
 
-public class GetDayStatusHandler(IHolidayRepository _holidayRepository)
+public class GetDayStatusHandler(IDayTypeChecker _dayTypeChecker)
     : IRequestHandler<GetDayStatusRequest, GetDayStatusResult>
 {
     public async Task<GetDayStatusResult> Handle(GetDayStatusRequest request, CancellationToken cancellationToken)
     {
-        // TODO: Move this function out into interface
-        var dayStatus = await GetDayStatusForCountryDate(request.Date, request.CountryCode);
+        var date = new DateOnly(request.Year, request.Month, request.Day);
 
-        return new GetDayStatusResult(request.Date, dayStatus);
-    }
+        var dayStatus = await _dayTypeChecker.GetStatusForCountryDayAsync(date, request.CountryCode);
 
-    private async Task<DayType> GetDayStatusForCountryDate(DateOnly date, string countryCode)
-    {
-        var matchedHoliday = await _holidayRepository.GetDateForCountryAsync(countryCode, date);
-        var isHoliday = matchedHoliday is not null;
-
-        if (isHoliday) return DayType.Holiday;
-        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday) return DayType.FreeDay;
-
-        return DayType.Workday;
+        return new GetDayStatusResult(date.ToString("yyyy-MM-dd"), dayStatus.ToString());
     }
 }

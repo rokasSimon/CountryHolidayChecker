@@ -2,7 +2,7 @@
 
 public record GetGroupedHolidaysResult(string CountryCode, int Year, IEnumerable<HolidayGroup> GroupedHolidays);
 
-public record HolidayGroup(int Month, IEnumerable<Holiday> Holidays);
+public record HolidayGroup(string MonthName, IEnumerable<Holiday> Holidays);
 
 public record Holiday(int Day, IEnumerable<LocalizedName> Names);
 
