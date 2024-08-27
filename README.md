@@ -17,7 +17,7 @@ dotnet dev-certs https -ep .\certificates\https\countryholidaychecker-api.pfx -p
 ```
 Afterwards just build the project:
 ```sh
-docker compose --env-file .\.env build
+docker compose --env-file ./.env build
 ```
 Finally, to run the project just supply the .env file to compose:
 ```sh
@@ -30,6 +30,10 @@ Migrations can be created with the following command from the base directory:
 ```sh
 dotnet ef migrations add migration_name --context "CountryHolidayContext" -p "./src/Infrastructure/Infrastructure.csproj" -o "./Migrations" -s "./src/API/API.csproj"
 ```
+SQLite migrations need to target Migrations.Sqlite instead:
+```sh
+dotnet ef migrations add sqlite_migration_name --context "CountryHolidayContext" -p "./src/Migrations.Sqlite/Migrations.Sqlite.csproj" -o "./Migrations" -s "./src/API/API.csproj"
+```
 
 To apply migrations use:
 ```sh
@@ -38,4 +42,4 @@ dotnet ef database update -p "./src/Infrastructure/Infrastructure.csproj" -s "./
 
 ## Usage
 
-You can open swagger [here](https://localhost:8081/swagger/index.html).
+You can open swagger [here](https://localhost:8081/swagger/index.html) from a running docker container.

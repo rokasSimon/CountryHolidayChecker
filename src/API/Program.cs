@@ -1,6 +1,12 @@
 using API;
 using Application;
 using Infrastructure;
+using Infrastructure.Contexts;
+
+using Microsoft.EntityFrameworkCore;
+
+using Migrations.Sqlite;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,15 +24,29 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddAPIServices();
 
+var sqliteConnectionString = builder.Configuration.GetConnectionString("CountryHolidaySqliteDB");
+
+if (sqliteConnectionString != null)
+{
+    builder.Services.AddDbContext<CountryHolidayContext>((_, options) =>
+    {
+        options.UseSqlite(sqliteConnectionString,
+                    opt => opt.MigrationsAssembly(typeof(Marker).Assembly.GetName().Name));
+    });
+}
+
 var app = builder.Build();
 
-app.UseSwagger();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (sqliteConnectionString != null)
 {
-    app.UseSwaggerUI();
+    using var scope = app.Services.CreateScope();
+    var service = scope.ServiceProvider.GetRequiredService<CountryHolidayContext>();
+
+    await service.Database.MigrateAsync();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

@@ -18,12 +18,35 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("CountryHolidayDB");
+        var mssqlConnectionString = configuration.GetConnectionString("CountryHolidayDB");
+        var sqliteConnectionString = configuration.GetConnectionString("CountryHolidaySqliteDB");
 
-        services.AddDbContext<CountryHolidayContext>((_, options) =>
+        // Had to be moved to API Assembly because we need reference to Sqlite migrations assembly,
+        // but that assembly needs to reference the context assembly (this assembly)
+        // so we get cyclical reference
+
+        //services.AddDbContext<CountryHolidayContext>((_, options) =>
+        //{
+        //    if (sqliteConnectionString != null)
+        //    {
+        //        options.UseSqlite(sqliteConnectionString,
+        //            opt => opt.MigrationsAssembly(typeof(Marker).Assembly.GetName().Name));
+        //    }
+        //    else
+        //    {
+        //        options.UseSqlServer(mssqlConnectionString,
+        //            opt => opt.MigrationsAssembly(typeof(DependencyInjection).Assembly.GetName().Name));
+        //    }
+        //});
+
+        if (sqliteConnectionString == null)
         {
-            options.UseSqlServer(connectionString);
-        });
+            services.AddDbContext<CountryHolidayContext>((_, options) =>
+            {
+                options.UseSqlServer(mssqlConnectionString,
+                    opt => opt.MigrationsAssembly(typeof(DependencyInjection).Assembly.GetName().Name));
+            });
+        }
 
         services.Configure<CountryHolidayFetcherOptions>(configuration.GetSection(nameof(CountryHolidayFetcherOptions)));
 

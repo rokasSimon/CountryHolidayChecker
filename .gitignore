@@ -4,11 +4,15 @@
 ## Get latest from `dotnet new gitignore`
 
 .containers
+*.db
+
+src/API/Properties/[Ss]erviceDependencies*
 
 # dotenv files
 # .env
 
 # User-specific files
+*.config
 *.rsuser
 *.suo
 *.user
